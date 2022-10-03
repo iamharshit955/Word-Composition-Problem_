@@ -86,7 +86,7 @@ public class FindLongestCompoundWord {
 		// Display the result
 		System.out.println("The 1st longest word: " + longestCompoundWord);
 		System.out.println("The 2nd longest word: " + secondLongestCompoundWord);
-		System.out.println("The count of words that can be constructed: " + numCompoundWord);
+		
 	}
 }
 
