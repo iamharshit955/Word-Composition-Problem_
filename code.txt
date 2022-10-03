@@ -1,0 +1,149 @@
+#include <string>
+#include <vector>
+#include <list>
+#include <iostream>
+#include <stdexcept>
+#include <memory>
+
+namespace LongestCompoundWord
+{
+
+
+	class FindLongestCompoundWord
+	{
+
+	public:
+		static void main(std::vector<std::wstring> &args);
+	};
+
+	// Wrapper class used to store word-suffix pair
+	class WordSuffix
+	{
+	public:
+		WordSuffix(const std::wstring &w, const std::wstring &s);
+
+		std::wstring word;
+		std::wstring suffix;
+	};
+}
+
+
+#include <string>
+#include <vector>
+
+int main(int argc, char **argv)
+{
+	std::vector<std::wstring> args(argv + 1, argv + argc);
+	LongestCompoundWord::FindLongestCompoundWord::main(args);
+}
+
+
+
+
+
+namespace LongestCompoundWord
+{
+	
+
+	void FindLongestCompoundWord::main(std::vector<std::wstring> &args)
+	{
+		// Name of input file
+		std::wstring fileName = L"./wordsforproblem.txt";
+		// Initialize the root of trie
+		std::shared_ptr<TrieNode> root = std::make_shared<TrieNode>(static_cast<wchar_t>(0));
+		// Variable to count the number of compound words
+		int numCompoundWord = 0;
+		// Longest compound word
+		std::wstring longestCompoundWord = L"";
+		// Second Longest compound word
+		std::wstring secondLongestCompoundWord = L"";
+
+		// Queue to store word-suffix pairs
+		std::list<std::shared_ptr<WordSuffix>> wordSuffixes;
+		// List to store all the prefixes of a word
+		std::vector<std::wstring> prefixes;
+		// variable to store a word-suffix pair
+		std::shared_ptr<WordSuffix> ws;
+
+		// Read strings from input file:
+		try
+		{
+			std::shared_ptr<BufferedReader> bufferReader = std::make_shared<BufferedReader>(std::make_shared<FileReader>(fileName));
+			std::wstring word;
+
+			// Read file line by line, check if a word has any prefixes. 
+			// If yes, create a word-suffix pair and add it to the queue of word-suffix pairs.
+			// Finally, insert the word into trie.
+			while ((word = bufferReader->readLine()) != L"")
+			{
+				prefixes = root->getAllPrefixes(word);
+				if (!prefixes.empty())
+				{
+					for (auto prefix : prefixes)
+					{
+						ws = std::make_shared<WordSuffix>(word, word.substr(prefix.length()));
+						wordSuffixes.push_back(ws);
+					}
+				}
+				root->insertWord(word);
+			}
+			// Close the buffer reader
+			bufferReader->close();
+		}
+		catch (const std::runtime_error &e)
+		{
+			std::wcout << L"Error while reading file line by line:" << e.what() << std::endl;
+		}
+
+		// Iterate the queue of word-suffix pairs, check if a word is compound word 
+		// by repeatedly checking if the suffix in a pair is a word in the file
+		while (!wordSuffixes.empty())
+		{
+			// Get a word-suffix pair from the queue
+			ws = wordSuffixes.pop_front();
+			std::wstring word = ws->word;
+			std::wstring suffix = ws->suffix;
+
+			// If the suffix is a word in the file, then the word is a compound word
+			if (root->contain(suffix))
+			{
+				// Increase the number of compound words
+				numCompoundWord++;
+				// if this compound word is longer than the previous longest compound word, 
+				// update the previous longest and second compound word
+				if (word.length() >= longestCompoundWord.length())
+				{
+					secondLongestCompoundWord = longestCompoundWord;
+					longestCompoundWord = word;
+				}
+			}
+			else
+			{
+			// If the suffix is not a word in the file, check if the suffix is a compound word itself
+				// Check if the suffix has any prefixes
+				prefixes = root->getAllPrefixes(suffix);
+
+				// If the suffix has prefixes, create new word-suffix pair, and add it to the queue
+				if (!prefixes.empty())
+				{
+					for (auto prefix : prefixes)
+					{
+						ws = std::make_shared<WordSuffix>(word, suffix.substr(prefix.length()));
+						wordSuffixes.push_back(ws);
+					}
+				}
+			}
+		}
+
+		// Display the result
+		std::cout << L"The 1st longest word: " << longestCompoundWord << std::endl;
+		std::cout << L"The 2nd longest word: " << secondLongestCompoundWord << std::endl;
+		std::cout << L"The count of words that can be constructed: " << numCompoundWord << std::endl;
+	}
+
+	WordSuffix::WordSuffix(const std::wstring &w, const std::wstring &s)
+	{
+		this->word = w;
+		this->suffix = s;
+	}
+}
