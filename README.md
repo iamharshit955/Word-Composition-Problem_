@@ -65,6 +65,8 @@ Algorithm
 The most important algorithm we use are Rabin karp and we use dynamic programming with Recursion.
 Rabin karp is used to find the hash value for every string,
 After sorting we scanned the string from the bottom and we call the recursion function and passes val and check composite words 
+
+
    
    
 
