@@ -74,7 +74,7 @@ After sorting we scanned the string from the bottom and we call the recursion fu
 Time Complexity
 ========
 
-The complexity of this algorithm is O(n*l*l) ,where n is the size no of strings in Input file and l is the length of longest string present in Input file.
+The complexity of this algorithm is O(n*(l*l)) ,where n is the size no of strings in Input file and l is the length of longest string present in Input file.
 
 
 
