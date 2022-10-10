@@ -72,7 +72,7 @@ After sorting we scanned the string from the bottom and we call the recursion fu
 Time Complexity
 ========
 
-The complexity of this algorithm is O(kN) where N is the number of words in the input list, and k the maximum number of words in a compound word. The number k may vary from one list to another, but it’ll generally be a constant number like 5 or 10. So, the algorithm is linear in number of words in the list, which is an optimal solution to the problem.
+The complexity of this algorithm is O(n*l*l) ,where n is the size no of strings in Input file and l is the length of longest string present in Input file.
 
 
 
